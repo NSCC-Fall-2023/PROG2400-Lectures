@@ -9,3 +9,5 @@ add_executable(best_practices best_practices/main.cpp
         best_practices/student_information.cpp
         best_practices/student_information.h)
 add_executable(command_line command_line/main.cpp)
+add_executable(stringstream stringstream/main.cpp)
+add_executable(dynamic_array dynamic_array/main.cpp)
