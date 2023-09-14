@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.22)
 project(PROG2400_Lectures)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -11,3 +11,4 @@ add_executable(best_practices best_practices/main.cpp
 add_executable(command_line command_line/main.cpp)
 add_executable(stringstream stringstream/main.cpp)
 add_executable(dynamic_array dynamic_array/main.cpp)
+add_executable(linked_lists linked_lists/main.cpp)
