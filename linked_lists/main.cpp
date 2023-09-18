@@ -11,6 +11,16 @@ private:
     LinkedListNode* m_start {nullptr};
 
 public:
+    virtual ~LinkedList() {
+        auto node = m_start;
+
+        while (node != nullptr) {
+            auto temp = node;
+            node = node->m_next;
+            delete temp;
+        }
+    }
+
     void add(int num) {
         // create a new node
         auto node = new LinkedListNode();
@@ -31,6 +41,48 @@ public:
             }
 
             prev->m_next = node;
+        }
+    }
+
+    void insert(int data, int before) {
+
+        // when list is empty, call the add function
+        if (m_start == nullptr) {
+            return add(data);
+        }
+
+        // create a new node
+        auto node = new LinkedListNode();
+        node->m_data = data;
+
+        // find node to insert before
+        int index = 1;
+        auto curr = m_start;
+        auto prev = (LinkedListNode *) nullptr;
+
+        while (curr != nullptr) {
+
+            // find index to insert before
+            if (index++ == before) {
+                break;
+            }
+
+            prev = curr;
+            curr = curr->m_next;
+        }
+
+        if (curr != nullptr) {
+
+            // found node to insert before
+            if (prev == nullptr) {
+                // inserting at the start
+                node->m_next = m_start;
+                m_start = node;
+            } else {
+                // inserting in the middle
+                node->m_next = prev->m_next;
+                prev->m_next = node;
+            }
         }
     }
 
@@ -118,6 +170,31 @@ int main() {
     list.remove(3); // delete the node with the value of 3
 
     std::cout << "Test 4" << std::endl;
+    std::cout << "------" << std::endl;
+    std::cout << list << std::endl;
+
+    // Test 5 - insert node at the start of the list
+    list.insert(0, 1); // insert before node index #1
+
+    std::cout << "Test 5" << std::endl;
+    std::cout << "------" << std::endl;
+    std::cout << list << std::endl;
+
+    // Test 6 - insert node in the middle of the list
+    list.insert(3, 3); // insert before node index #3
+
+    std::cout << "Test 6" << std::endl;
+    std::cout << "------" << std::endl;
+    std::cout << list << std::endl;
+
+    // Test 7 - insert node in empty list
+    list.remove(0);
+    list.remove(2);
+    list.remove(3);
+    list.remove(4);
+    list.insert(0, 1); // insert before node index #1
+
+    std::cout << "Test 7" << std::endl;
     std::cout << "------" << std::endl;
     std::cout << list << std::endl;
 
