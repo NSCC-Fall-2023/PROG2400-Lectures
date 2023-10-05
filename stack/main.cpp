@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include <memory>
 
 struct Student {
     std::string m_id   {"W999999"};
@@ -8,16 +9,17 @@ struct Student {
 
 struct Node {
     Student m_data;
-    Node* m_next {nullptr};
+    std::unique_ptr<Node> m_next {nullptr};
 };
 
 class Stack {
 private:
-    Node* m_top {nullptr};
+    std::unique_ptr<Node> m_top {nullptr};
 
 public:
     void push(Student data) {
-        auto node = new Node();
+        //auto node = new Node();
+        auto node = std::make_unique<Node>();
         node->m_data = std::move(data);
         node->m_next = m_top;
         m_top = node;
