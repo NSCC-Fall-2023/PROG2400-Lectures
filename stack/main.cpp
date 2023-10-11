@@ -2,6 +2,22 @@
 #include <utility>
 #include <memory>
 
+class Stack;
+
+//class SmartPtr {
+//private:
+//    Stack *data {nullptr};
+//
+//    static SmartPtr make_smartptr() {
+//        auto ptr = SmartPtr();
+//        ptr.data = new Stack();
+//    }
+//
+//    ~SmartPtr() {
+//        delete data;
+//    }
+//};
+
 struct Student {
     std::string m_id   {"W999999"};
     std::string m_name {"No Name"};
@@ -21,14 +37,14 @@ public:
         //auto node = new Node();
         auto node = std::make_unique<Node>();
         node->m_data = std::move(data);
-        node->m_next = m_top;
-        m_top = node;
+        node->m_next = std::move(m_top);
+        m_top = std::move(node);
     }
 
     void pop() {
-        auto node = m_top;
-        m_top = m_top ? m_top->m_next : nullptr;
-        delete node;
+        //auto node = m_top;
+        m_top = m_top ? std::move(m_top->m_next) : nullptr;
+        //delete node;
     }
 
     Student peek() {
@@ -50,10 +66,10 @@ std::ostream& operator<<(std::ostream& output, const Student& student) {
 }
 
 std::ostream& operator<<(std::ostream& output, Stack& stack) {
-    auto node = stack.m_top;
+    auto node = stack.m_top.get();
     while (node != nullptr) {
         std::cout << node->m_data;
-        node = node->m_next;
+        node = node->m_next.get();
     }
 
     return output;
