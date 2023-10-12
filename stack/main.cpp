@@ -2,6 +2,22 @@
 #include <utility>
 #include <memory>
 
+class Stack;
+
+//class SmartPtr {
+//private:
+//    Stack *data {nullptr};
+//
+//    static SmartPtr make_smartptr() {
+//        auto ptr = SmartPtr();
+//        ptr.data = new Stack();
+//    }
+//
+//    ~SmartPtr() {
+//        delete data;
+//    }
+//};
+
 struct Student {
     std::string m_id   {"W999999"};
     std::string m_name {"No Name"};
@@ -26,7 +42,7 @@ public:
     }
 
     void pop() {
-        //auto node = m_top.get();
+        //auto node = m_top;
         m_top = m_top ? std::move(m_top->m_next) : nullptr;
         //delete node;
     }
