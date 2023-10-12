@@ -21,14 +21,14 @@ public:
         //auto node = new Node();
         auto node = std::make_unique<Node>();
         node->m_data = std::move(data);
-        node->m_next = m_top;
-        m_top = node;
+        node->m_next = std::move(m_top);
+        m_top = std::move(node);
     }
 
     void pop() {
-        auto node = m_top;
-        m_top = m_top ? m_top->m_next : nullptr;
-        delete node;
+        //auto node = m_top.get();
+        m_top = m_top ? std::move(m_top->m_next) : nullptr;
+        //delete node;
     }
 
     Student peek() {
@@ -50,10 +50,10 @@ std::ostream& operator<<(std::ostream& output, const Student& student) {
 }
 
 std::ostream& operator<<(std::ostream& output, Stack& stack) {
-    auto node = stack.m_top;
+    auto node = stack.m_top.get();
     while (node != nullptr) {
         std::cout << node->m_data;
-        node = node->m_next;
+        node = node->m_next.get();
     }
 
     return output;
