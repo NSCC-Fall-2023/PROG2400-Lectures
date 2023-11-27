@@ -1,6 +1,8 @@
 #include <span>
 #include <queue>
 #include <numeric>
+#include <random>
+
 #include "sorting.h"
 
 void track_time(auto desc, void (*f)(std::span<int>), std::span<int> nums) {
@@ -21,6 +23,27 @@ std::string join(const std::span<int> nums, auto ch) {
             });
 }
 
+std::ostream& operator<<(std::ostream& output, std::queue<int> queue) {
+    if (queue.empty()) return output;
+    while (queue.size() > 1) {
+        auto num = queue.front();
+        queue.pop();
+        output << num << ",";
+    }
+    output << queue.front();
+    return output;
+}
+
+std::ostream& operator<<(std::ostream& output, std::span<int> array) {
+    if (array.empty()) return output;
+    auto i = 0;
+    for (; i < array.size() -1; i++) {
+        output << array[i] << ",";
+    }
+    output << array[i];
+    return output;
+}
+
 void split(std::queue<int>& in, std::queue<int>& out1, std::queue<int>& out2) {
     int num_subfiles = 0;
 
@@ -35,22 +58,28 @@ void split(std::queue<int>& in, std::queue<int>& out1, std::queue<int>& out2) {
 
         // write out odds and evens
         if (num_subfiles % 2 == 0) {
-            out2.push(curr);
-        } else {
             out1.push(curr);
+        } else {
+            out2.push(curr);
         }
 
         prev = curr;
     }
 }
 
-bool elements_in_column(std::queue<int>& first, std::queue<int>& second, int last) {
-    return !first.empty() && (first.front() <= last) &&
-            (second.empty() || (second.front() < last) || (first.front() < second.front()));
+bool elements_in_column(const std::queue<int>& first, const std::queue<int>& second, const int last) {
+    return !first.empty() && (first.front() >= last) &&
+            (second.empty() || (second.front() < last) || (first.front() <= second.front()));
 }
 
-bool elements_in_sublist(std::queue<int>& first, std::queue<int>& second, int last) {
+bool elements_in_sublist(const std::queue<int>& first, const std::queue<int>& second, const int last) {
     return !first.empty() && (first.front() >= last);
+}
+
+bool elements_in_second(const std::queue<int>& first, const std::queue<int>& second, const int last) {
+    return first.empty() || !second.empty() &&
+        ((second.front() >= last) || // has values for current sublist
+        ((second.front() < last) && (second.front() < first.front()))); // has values for new sublist
 }
 
 int merge(std::queue<int>& out, std::queue<int>& in1, std::queue<int>& in2) {
@@ -74,7 +103,7 @@ int merge(std::queue<int>& out, std::queue<int>& in1, std::queue<int>& in2) {
 
             // when done switch to taking elements from second column
             // if there is none left in second, stay on first
-            if (!second.empty()) {
+            if (elements_in_second(first, second, last)) {
                 std::swap(first, second);
             }
         }
