@@ -21,6 +21,17 @@ std::string join(const std::span<int> nums, auto ch) {
             });
 }
 
+std::ostream& operator<<(std::ostream& output, std::queue<int> queue) {
+    if (queue.empty()) return output;
+    while (queue.size() > 1) {
+        auto num = queue.front();
+        queue.pop();
+        output << num << ",";
+    }
+    output << queue.front();
+    return output;
+}
+
 void split(std::queue<int>& in, std::queue<int>& out1, std::queue<int>& out2) {
     int num_subfiles = 0;
 
@@ -35,9 +46,9 @@ void split(std::queue<int>& in, std::queue<int>& out1, std::queue<int>& out2) {
 
         // write out odds and evens
         if (num_subfiles % 2 == 0) {
-            out2.push(curr);
-        } else {
             out1.push(curr);
+        } else {
+            out2.push(curr);
         }
 
         prev = curr;
@@ -45,12 +56,18 @@ void split(std::queue<int>& in, std::queue<int>& out1, std::queue<int>& out2) {
 }
 
 bool elements_in_column(std::queue<int>& first, std::queue<int>& second, int last) {
-    return !first.empty() && (first.front() <= last) &&
+    return !first.empty() && (first.front() >= last) &&
             (second.empty() || (second.front() < last) || (first.front() < second.front()));
 }
 
 bool elements_in_sublist(std::queue<int>& first, std::queue<int>& second, int last) {
     return !first.empty() && (first.front() >= last);
+}
+
+bool elements_not_in_current_list(std::queue<int>& first, std::queue<int>& second, int last) {
+    return first.empty() || !second.empty() &&
+            ((first.front() < last) ||
+            ((first.front() > last) && (second.front() < first.front()))) ;
 }
 
 int merge(std::queue<int>& out, std::queue<int>& in1, std::queue<int>& in2) {
@@ -74,7 +91,7 @@ int merge(std::queue<int>& out, std::queue<int>& in1, std::queue<int>& in2) {
 
             // when done switch to taking elements from second column
             // if there is none left in second, stay on first
-            if (!second.empty()) {
+            if (elements_not_in_current_list(first, second, last)) {
                 std::swap(first, second);
             }
         }
@@ -139,6 +156,7 @@ int main() {
 //        fill_array({nums, len});
 //        track_time("bst sort", bst_sort, {nums, len});
         fill_array({nums, len});
+//        std::array array = {6,1,3,9,9,7,2,4,8,1};
         std::cout << join({nums, len}, ',') << std::endl;
         track_time("merge sort", merge_sort, {nums, len});
         std::cout << join({nums, len}, ',') << std::endl;
